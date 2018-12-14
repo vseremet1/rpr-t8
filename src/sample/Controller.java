@@ -1,21 +1,21 @@
 package sample;
 
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-
 import java.io.File;
 
 import javafx.scene.control.Button;
 
-
 public class Controller {
     public TextField podstring;
     public Button trazi;
+    public Button prekini;
     public ListView spisak;
     public File korijenski = new File(System.getProperty("user.home"));
     private Thread t;
@@ -34,8 +34,16 @@ public class Controller {
 
         if (trazeni.isFile())
             if (trazeni.getName().contains(podstring.getText()))
-                lista.add(trazeni.getAbsolutePath());
+            {
+                try {
+                    Thread.sleep(100);
+                }
+                catch (Exception e)
+                {
 
+                }
+                Platform.runLater(()->lista.add(trazeni.getAbsolutePath()));
+            }
 
         if (trazeni.isDirectory())
             for (File novi : trazeni.listFiles())
@@ -56,6 +64,13 @@ public class Controller {
         Pretrazivanje pr = new Pretrazivanje();
         t = new Thread(pr);
         t.start();
+    }
+
+    public void prekini(ActionEvent actionEvent) {
+
+        trazi.setDisable(true);
+        prekini.setDisable(false);
+        t.stop();
     }
 
     public class Pretrazivanje implements Runnable {
